@@ -22,7 +22,7 @@ import datetime
 non_defective_dir = '/content/drive/MyDrive/collab/casting_512x512/ok_front'
 output_dir = '/content/drive/MyDrive/collab/16_12_Results'
 
-# Load Images from Directory - Adjusted for 512x512 color images
+# Load Images from Directory
 def load_images(directory, size=(512, 512)):  # Resize to 512x512
     images = []
     for filename in glob.glob(directory + '/*.jpeg'):
@@ -40,7 +40,7 @@ def preprocess_images(images):
 dataset = load_images(non_defective_dir)
 dataset = preprocess_images(dataset)
 
-# Define the Generator Model for 512x512 color images
+# Generator Model
 def make_generator_model():
     model = tf.keras.Sequential([
         layers.Dense(32*32*512, use_bias=False, input_shape=(100,)),
@@ -69,7 +69,7 @@ def make_generator_model():
     return model
 
 
-# Modify the Discriminator Model for 512x512 color images
+# Discriminator Model
 def make_discriminator_model():
     model = tf.keras.Sequential([
         layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same', input_shape=[512, 512, 3]),
@@ -103,7 +103,7 @@ current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 log_dir = 'logs/' + current_time
 summary_writer = tf.summary.create_file_writer(log_dir)
 
-# Function to save generated images for color images
+# Function to save generated images
 def save_generated_images(epoch, generator, noise_dim, examples=16, dim=(4, 4), figsize=(10,10)):
     noise = tf.random.normal([examples, noise_dim])
     generated_images = generator(noise, training=False)
@@ -175,7 +175,7 @@ def train_step(images):
         return gen_loss, disc_loss
 
 
-# Modify the training loop to record losses
+# Training loop to record losses
 def train(dataset, epochs, batch_size, noise_dim):
     buffer_size = len(dataset)
     batch_dataset = tf.data.Dataset.from_tensor_slices(dataset).shuffle(buffer_size).batch(batch_size)
@@ -268,6 +268,3 @@ plt.title('Generated Image')
 plt.axis('off')
 
 plt.show()
-
-from google.colab import drive
-drive.mount('/content/drive')
